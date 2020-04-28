@@ -1,6 +1,5 @@
 library(data.table)
 library(ggplot2)
-library(scales)
 getwd()
 daily_runoff <- readRDS(file = './data/Data for final project-20200428/runoff_eu_day.rds')
 annual_runoff <- readRDS(file = './data/Data for final project-20200428/runoff_eu_year.rds')
@@ -86,3 +85,55 @@ results_2[, mean(meanmax_difference), by = alt_range_class][c(1,3,4),]
 results_2[, mean(meanmin_difference), by = max_range_class]
 results_2[, mean(meanmax_difference), by = min_range_class][1:3]
 results_2[, mean(meanmax_difference), by = alt_range_class][c(1,3,4),]
+daily_runoff$month <- as.numeric(daily_runoff$month)
+daily_runoff[(month < 4), season := factor('winter')]
+daily_runoff[(month > 6) & (month < 10), season := factor('summer')]
+daily_runoff[300:350,]
+summer_winter_runnoff <- daily_runoff[,mean(value), by = .(id,season)]
+a <- which(summer_winter_runnoff$season == "winter")
+b <- which(summer_winter_runnoff$season == "summer")
+summer_winter_runnoff[c(a, b),]
+daily_runoff$year <- as.numeric(daily_runoff$year)
+daily_runoff[year >= 1980, year_class := factor('Post 1980')]
+daily_runoff[year < 1980, year_class := factor('Pre 1980')]
+daily_runoff
+summer_winter <- daily_runoff[,mean(value), by = .(id,season,year_class)]
+d <- which(summer_winter$season == "winter")
+e <- which(summer_winter$season == "summer")
+summer_winter <- summer_winter[c(d, e),]
+summer_winter
+unique(summer_winter$id)
+summer_winter$year_class
+summer_winter <- summer_winter[-1,]
+summer_winter <- summer_winter[-237,]
+summer_winter <- summer_winter[-401,]
+summer_winter <- summer_winter[-637,]
+summer_winter
+percentage_change <- c()
+for (i in 1:length(rownames(summer_winter))) {
+  percentage_change[i] <- 100*(summer_winter$V1[(2 * i)] - summer_winter$V1[((2 * i)-1)])/(summer_winter$V1[((2 * i)-1)])
+}
+winter <- percentage_change[1:200]
+summer <- percentage_change[201:400]
+results_3 <- data.table(unique(summer_winter[,1]), winter, summer)
+results_3
+results_3$ID_type_winter <- ifelse(winter < 0, "below", "above")
+ggplot(results_3, aes(x=id, y=winter, label=winter)) + 
+  geom_bar(stat='identity', aes(fill=ID_type_winter), width=.5)  +
+                    scale_fill_manual(name="percentage change", 
+                                      labels = c("Positive", "Negitive"), 
+                                      values = c("above"="#00ba38", "below"="#f8766d")) + 
+                      labs(subtitle="percentage change of mean runnoff at stations before and after 1980", 
+                           title= "Diverging Bars") + 
+                      coord_flip()
+                    
+  coord_flip()
+results_3$ID_type_summer <- ifelse(summer < 0, "below", "above")
+ggplot(results_3, aes(x=id, y=summer, label=summer)) + 
+  geom_bar(stat='identity', aes(fill=ID_type_summer), width=.5)  +
+  scale_fill_manual(name="percentage change", 
+                    labels = c("Positive", "Negitive"), 
+                    values = c("above"="#00ba38", "below"="#f8766d")) + 
+  labs(subtitle="percentage change of mean runnoff at stations before and after 1980", 
+       title= "Diverging Bars") + 
+  coord_flip()
