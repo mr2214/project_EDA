@@ -1,5 +1,6 @@
 library(data.table)
 library(ggplot2)
+library(scales)
 getwd()
 daily_runoff <- readRDS(file = './data/Data for final project-20200428/runoff_eu_day.rds')
 annual_runoff <- readRDS(file = './data/Data for final project-20200428/runoff_eu_year.rds')
@@ -46,27 +47,42 @@ characersitic_of_station_2
 daily_runnoff_descriptive_statistics
 daily_runnoff_descriptive_statistics[year >= 1980, year_class := factor('Post 1980')]
 daily_runnoff_descriptive_statistics[year < 1980, year_class := factor('Pre 1980')]
+daily_runnoff_descriptive_statistics
 change_in_ratio <- daily_runnoff_descriptive_statistics[, .(mean(meanmaxratio), mean(meanminratio)), by = .(id, year_class)]
-change_in_ratio
+unique(change_in_ratio[,1])
 change_in_ratio[, year_class]
 change_in_ratio <- change_in_ratio[-1,]
-change_in_ratio <- change_in_ratio[-238,]
+change_in_ratio$id
+change_in_ratio[237]
+change_in_ratio <- change_in_ratio[-237,]
 meanmax_difference <- c()
 length(rownames(change_in_ratio))
 for (i in 1:length(rownames(change_in_ratio))) {
   meanmax_difference[i] <- change_in_ratio$V1[(2 * i)] - change_in_ratio$V1[((2 * i)-1)]
 }
-meanmax_difference <- meanmax_difference[1:201]
+meanmax_difference <- meanmax_difference[1:200]
 meanmin_difference <- c()
 for (i in 1:length(rownames(change_in_ratio))) {
   meanmin_difference[i] <- change_in_ratio$V1[(2 * i)] - change_in_ratio$V1[((2 * i)-1)]
 }
-meanmin_difference <- meanmin_difference[1:201]
+meanmin_difference <- meanmin_difference[1:200]
 meanmin_difference
 print(change_in_ratio[,1], topn = 400)
 change_in_ratio
 print(unique(change_in_ratio[,1]), topn = 201)
 length(meanmax_difference)
 results <- data.table(meanmax_difference, meanmin_difference, unique(change_in_ratio[,1]))
-results
-print(results, topn = 201)
+str(results)
+colnames(results) <- c("meanmax_difference", "meanmin_difference", "ID")
+characersitic_of_station_2[120,]
+characersitic_of_station_2 <- characersitic_of_station_2[-c(1,120),]
+characersitic_of_station_2
+results$ID <- as.numeric(results$ID)
+results_2 <- merge(characersitic_of_station_2,results)
+results_2 <- results_2[,c(1,5,6,7,8,9)]
+results_2[, mean(meanmax_difference), by = max_range_class]
+results_2[, mean(meanmax_difference), by = min_range_class][1:3,]
+results_2[, mean(meanmax_difference), by = alt_range_class][c(1,3,4),]
+results_2[, mean(meanmin_difference), by = max_range_class]
+results_2[, mean(meanmax_difference), by = min_range_class][1:3]
+results_2[, mean(meanmax_difference), by = alt_range_class][c(1,3,4),]
