@@ -1,11 +1,10 @@
-library(data.table)
-library(mapview) 
-library(sf) 
-getwd()
-info_for_project <- readRDS(file = './data/Data for final project-20200428/runoff_eu_info.rds')
 install.packages(c("leaflet", "sp"))
+library(data.table)
 library(sp)
 library(leaflet)
+library(ggplot2)
+getwd()
+info_for_project <- readRDS(file = './data/Data for final project-20200428/runoff_eu_info.rds')
 df <- data.frame(longitude = info_for_project$Lon, 
                  latitude = info_for_project$Lat)
 
