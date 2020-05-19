@@ -4,11 +4,13 @@ getwd()
 daily_runoff <- readRDS(file = './data/Data for final project-20200428/runoff_eu_day.rds')
 annual_runoff <- readRDS(file = './data/Data for final project-20200428/runoff_eu_year.rds')
 info_for_project <- readRDS(file = './data/Data for final project-20200428/runoff_eu_info.rds')
-
+annual_runoff
 daily_runoff <- daily_runoff[value >= 0]
 daily_runoff$month <- format(as.Date(daily_runoff$date), "%m")
 daily_runoff$year <- format(as.Date(daily_runoff$date), "%Y")
-
+savedaily_runoff <- saveRDS(daily_runoff, file = "./data/daily_runoff.rds")
+daily_runoff <- readRDS(file = "./data/daily_runoff.rds")
+daily_runoff
 daily_runnoff_descriptive_statistics <- daily_runoff[, .(mean(value), max(value), min(value), sd(value), median(value)), by = .(id,year)]
 colnames(daily_runnoff_descriptive_statistics) <-  c("id","year","mean","max","min","sd","median")
 daily_runnoff_descriptive_statistics
@@ -18,9 +20,12 @@ daily_runnoff_descriptive_statistics$meanmaxratio <- daily_runnoff_descriptive_s
 daily_runnoff_descriptive_statistics$meanminratio <- daily_runnoff_descriptive_statistics$mean/daily_runnoff_descriptive_statistics$min
 daily_runnoff_descriptive_statistics
 daily_runnoff_descriptive_statistics$range <- daily_runnoff_descriptive_statistics$max - daily_runnoff_descriptive_statistics$min
+daily_runnoff_descriptive_statistics
+
 characersitic_of_station <- daily_runnoff_descriptive_statistics[, .(max(range), min(range)), by = id]
 colnames(characersitic_of_station) <- c("ID","max_range", "min_range")
 characersitic_of_station$ID <- as.numeric(characersitic_of_station$ID)
+characersitic_of_station
 characersitic_of_station_2 <- merge(characersitic_of_station,info_for_project)
 characersitic_of_station_2 <- characersitic_of_station_2[,c(1,2,3,10)]
 characersitic_of_station_2

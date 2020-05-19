@@ -15,7 +15,7 @@ annual_runoff
 #some rivers heavilyy influnced by snowmelt during summer months, while some rivers recieve little/no snow melt
 characersitic_of_station_2$alt_range_class
 #river elbe, rivr danube, neckar, saale, dee (scotland)
-info_for_project$River
+info_for_project
 elbe_position <- which(info_for_project$River == "ELBE RIVER")
 danube_position <- which(info_for_project$River == "DANUBE RIVER")
 neckar_position <- which(info_for_project$River == "NECKAR")
@@ -92,9 +92,8 @@ runoff_year_cor <- cor(runnoff_year_mat[, -1], use = "pairwise.complete.obs")
 runoff_year_cor <- round(runoff_year_cor,2)
 to_plot <- melt(runoff_year_cor)
 to_plot
-data(mtcars)
-corr <- round(cor(mtcars), 1)
-corr
+
+
 col1 <- colorRampPalette(c("#7F0000", "red", "#FF7F00", "yellow", "white",
                            "cyan", "#007FFF", "blue", "#00007F"))
 col2 <- colorRampPalette(c("#67001F", "#B2182B", "#D6604D", "#F4A582",
@@ -105,9 +104,11 @@ col4 <- colorRampPalette(c("#7F0000", "red", "#FF7F00", "yellow", "#7FFF7F",
                            "cyan", "#007FFF", "blue", "#00007F"))
 whiteblack <- c("white", "black")
 corrplot(runoff_year_cor, order = "hclust", addrect = 2, col = col4(10), method = "number")
+
 runoff_5_rivers <- runoff_5_rivers[,-6]
 runoff_5_rivers
 runoff_5_rivers_2 <- runoff_5_rivers
+runoff_5_rivers_2
 runoff_5_rivers_2$month <- as.numeric(factor((runoff_5_rivers_2$month)))
 runoff_5_rivers_2[month == 1 | month == 2 | month == 3, season := factor('winter')]
 runoff_5_rivers_2[month == 7 | month == 8 | month == 9, season := factor('summer')]
@@ -124,6 +125,7 @@ winter_runnof <- winter_runnof[,sum(value), by = .(year,id)]
 winter_runnof
 summer_runnof$year <- as.numeric(factor((summer_runnof$year)))
 winter_runnof$year <- as.numeric(factor((winter_runnof$year)))
+
 
 ggplot(summer_runnof, aes(x = year, y = V1)) +
   geom_line(col = colset_4[3], aes(group = 1))+
@@ -145,3 +147,36 @@ ggplot(winter_runnof, aes(x = year, y = V1)) +
   xlab(label = "Year") +
   ylab(label = "Runoff (m3/s)") +
   theme_bw()
+info_for_project$ID
+summer_runnof
+daily_runoff
+daily_runoff <- daily_runoff[value >= 0]
+daily_runoff$month <- format(as.Date(daily_runoff$date), "%m")
+daily_runoff$year <- format(as.Date(daily_runoff$date), "%Y")
+daily_runoff
+
+daily_runoff$month <- as.numeric(factor((daily_runoff$month)))
+daily_runoff[month == 1 | month == 2 | month == 3, season := factor('winter')]
+daily_runoff[month == 7 | month == 8 | month == 9, season := factor('summer')]
+all_summer_runoff <- daily_runoff[season == "summer" ]  
+all_summer_runoff <- all_summer_runoff[,sum(value), by = .(year,id)]
+all_summer_runoff
+unique(all_summer_runoff$id)
+ggplot(all_summer_runoff, aes(x = year, y = V1)) +
+  geom_line(col = colset_4[3], aes(group = 1))+
+  geom_point(col = colset_4[3])+
+  facet_wrap(~id, scales = 'free') +
+  geom_smooth(method = 'lm', formula = y~x, se = 0, col = colset_4[1]) +
+  geom_smooth(method = 'loess', formula = y~x, se = 0, col = colset_4[4]) +
+  scale_color_manual(values = colset_4[c(1, 2, 3, 4)]) +
+  xlab(label = "Year") +
+  ylab(label = "Runoff (m3/s)") +
+  theme_bw()
+daily_runnoff_descriptive_statistics
+info_for_project
+#high mean value, #high sd, #high max, #high lat, #high altitude
+# take 20 random samples(so assess similarity to other data)
+analysis_of_means <- daily_runnoff_descriptive_statistics[, sum(mean), by = id]
+medium_ids <- analysis_of_means[order(-V1)][90:110]
+medium_ids
+info_for_project[ID %in% medium_ids$id]
