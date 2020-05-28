@@ -8,8 +8,12 @@ info_for_project <- readRDS(file = './data/Data for final project-20200428/runof
 df <- data.frame(longitude = info_for_project$Lon, 
                  latitude = info_for_project$Lat)
 
+info_for_project
 coordinates(df) <- ~longitude+latitude
-leaflet(df) %>% addMarkers() %>% addTiles()
+leaflet(df) %>% addMarkers(lng = info_for_project$Lon, lat = info_for_project$Lat, popup = paste("Region", info_for_project$Continent, "<br>",
+                           "river:", info_for_project$River, "<br>",
+                           "country:", info_for_project$Country, "<br>",
+                           "altitude", info_for_project$Alt)) %>% addTiles()
 #stations are located in europe, particularly dense in mainland western europe and scandinavia, there are some stations sparely distributed in Russia and eastern europe, and the British Isles and Iceland.
 info_for_project[, .N, by = Country]
 info_for_project[, .N, by = .(River,Country)][, .N, by = Country]
