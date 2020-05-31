@@ -46,18 +46,20 @@ leaflet(df) %>% addMarkers(lng = info_for_project$Lon, lat = info_for_project$La
 
 ### number of stations per country/river and number of stations per river
 ```{r, echo=FALSE}
-info_for_project[, .N, by = Country]
-info_for_project[, .N, by = .(River,Country)][, .N, by = Country]
-info_for_project[, .N, by = River]
+knitr::kable(info_for_project[, .N, by = Country], caption = "number of stations per country")
+knitr::kable(info_for_project[, .N, by = .(River,Country)][, .N, by = Country], caption = "number of rivers per country")
+knitr::kable(info_for_project[, .N, by = River], caption = "number of stations per river")
 ```
 
 ### Distribution in space of stations
 There is a large cluster of stations around 45-50 degrees in latitude and 5 to 15 degrees in longitude, theses would correspond to rivers mainly flowing out of alpine regions in Switzerland and Germany, with higher altitudes, as latitude increases, the altitude decreases, this is typical of  Germany, since the coastline is in the north.
 ```{r, echo=FALSE, warning=FALSE}
 lon_lat_alt <- ggplot(data = info_for_project, aes(x = Lat, y = Lon, size = Alt)) +
-  geom_point()
+  geom_point() +
+  ggtitle("Plot of geographical location and altitude of stations")
 lon_lat_alt
-lon_lat_alt + coord_cartesian(xlim = c(45, 55), ylim = c(0, 20))
+lon_lat_alt + coord_cartesian(xlim = c(45, 55), ylim = c(0, 20))+
+  ggtitle("Plot of geographical location and altitude of stations--high density of stations(alps)")
 ggplot(data = info_for_project, aes(x = 1:208, y = N.Years)) +
    geom_point()
 
@@ -66,13 +68,12 @@ theme_set(theme_bw())
 
 ### distribution by nmber of years of recorded data
 while this is from info given, actual dataset may differ
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning = FALSE, message = FALSE}
 ggplot(info_for_project, aes(x = 1:208, y = N.Years)) + 
-  geom_bar(stat="identity", width=.5, fill="tomato3") + 
-  labs(title="Number of years of observation", 
-       subtitle="distribution of recorder data", 
-       caption="source: https://www.bafg.de/GRDC/EN/01_GRDC/grdc_node.html") + 
-  theme(axis.text.x = element_text(angle=65, vjust=0.6))
+  geom_bar(stat = "identity", width = .5, fill = "tomato3") + 
+  labs(title = "Number of years of observation", 
+       subtitle = "distribution of recorder data") +
+  theme(axis.text.x = element_text(angle = 65, vjust = 0.6))
 ```
 
 ## annual and seasonal runoff
@@ -89,17 +90,17 @@ daily_runoff <- readRDS(file = "./data/daily_runoff.rds")
 
 daily_runoff <- daily_runoff[value >= 0]
 daily_runnoff_descriptive_statistics <- daily_runoff[, .(mean(value), max(value), min(value), sd(value), median(value)), by = .(id,year)]
-colnames(daily_runnoff_descriptive_statistics) <-  c("id","year","mean","max","min","sd","median")
+colnames(daily_runnoff_descriptive_statistics) <-  c("id", "year", "mean", "max", "min", "sd", "median")
 daily_runnoff_descriptive_statistics$COF <- daily_runnoff_descriptive_statistics$sd/daily_runnoff_descriptive_statistics$mean
-daily_runnoff_descriptive_statistics$skew <- 3*(daily_runnoff_descriptive_statistics$mean - daily_runnoff_descriptive_statistics$median)/daily_runnoff_descriptive_statistics$sd
+daily_runnoff_descriptive_statistics$skew <- 3 * (daily_runnoff_descriptive_statistics$mean - daily_runnoff_descriptive_statistics$median)/daily_runnoff_descriptive_statistics$sd
 daily_runnoff_descriptive_statistics$meanmaxratio <- daily_runnoff_descriptive_statistics$mean/daily_runnoff_descriptive_statistics$max
 daily_runnoff_descriptive_statistics$meanminratio <- daily_runnoff_descriptive_statistics$mean/daily_runnoff_descriptive_statistics$min
 daily_runnoff_descriptive_statistics$range <- daily_runnoff_descriptive_statistics$max - daily_runnoff_descriptive_statistics$min
 characersitic_of_station <- daily_runnoff_descriptive_statistics[, .(max(range), min(range)), by = id]
-colnames(characersitic_of_station) <- c("ID","max_range", "min_range")
+colnames(characersitic_of_station) <- c("ID", "max_range", "min_range")
 characersitic_of_station$ID <- as.numeric(characersitic_of_station$ID)
 characersitic_of_station_2 <- merge(characersitic_of_station,info_for_project)
-characersitic_of_station_2 <- characersitic_of_station_2[,c(1,2,3,10)]
+characersitic_of_station_2 <- characersitic_of_station_2[, c(1, 2, 3, 10) ]
 
 ```
 
@@ -107,13 +108,16 @@ characersitic_of_station_2 <- characersitic_of_station_2[,c(1,2,3,10)]
 After calculating the minimum and maximum run off for each year for each station, I plotted the maximum value and minimum value and made categories for the data. I also categorised by altitude, though some records were missing.
 ```{r, echo=FALSE, warning=FALSE}
 ggplot(characersitic_of_station_2, aes(x=1:202, y = max_range)) +
-  geom_point()
+  geom_point()+
+  ggtitle("Plot of max discharge range of stations")
 # data could be splti to 0:2500 = low, 2500:5000 = midian, >5000 = high
 ggplot(characersitic_of_station_2, aes(x=1:202, y = min_range)) +
-  geom_point()
+  geom_point() + 
+  ggtitle("Plot of min discharge range of stations")
 # data could be split to 0:500 = low,   500:1000 = median, >1000 high
 ggplot(characersitic_of_station_2, aes(x=1:202, y = Alt)) +
-  geom_point()
+  geom_point() +
+  ggtitle("Plot of altitude of stations")
 # data could be split 0:200 = low, 200:600 = mediam, >600 = high
 characersitic_of_station_2[max_range < 2500, max_range_class := factor('low')]
 characersitic_of_station_2[max_range > 2500 & max_range < 5000, max_range_class := factor('medium')]
@@ -150,7 +154,7 @@ characersitic_of_station_2 <- characersitic_of_station_2[-c(1,120),]
 results$ID <- as.numeric(results$ID)
 results_2 <- merge(characersitic_of_station_2,results)
 results_2 <- results_2[,c(1,5,6,7,8,9)]
-results_2
+knitr::kable(results_2, caption = "class of each station")
 ```
 
 ### aggregation of daily runnoff by season
@@ -173,11 +177,11 @@ summer_winter <- summer_winter[-1,]
 summer_winter <- summer_winter[-237,]
 summer_winter <- summer_winter[-401,]
 summer_winter <- summer_winter[-637,]
-summer_winter
+knitr::kable(summer_winter, caption = "investigating changes in seasonal runnoff pre and post 1980")
 ```
 
 ### percentage change
-plotting reulsts, in winter, runnoff has increased over the period 1908-present, this relationship is unclear in the summer period with different rivers showing falls and rises, firther investigations would be needed to indentify why this result exists
+plotting reulsts, in winter, runnoff has increased over the period 1980-present, this relationship is unclear in the summer period with different rivers showing falls and rises, firther investigations would be needed to indentify why this result exists
 ```{r, echo=FALSE, fig.height=15, warning=FALSE}
 percentage_change <- c()
 for (i in 1:length(rownames(summer_winter))) {
@@ -213,7 +217,7 @@ while there are no dams between Vienna and Bratislava, the danube has many dams 
 
 rhine – upper parts of the rhine have many dams
 sitter – 11 hydroelectric plants along the river 
-luestan- a small river heading to a lkae, in high altitude influenced heavily by snowmelt
+LUETSCHINE - a small river heading to a lkae, in high altitude influenced heavily by snowmelt
 glama – many power stations have been built along the river.
 
 I chose stations based on large mean values, large standard deviations, large altitude, high latitude, and high max values, were duplicate rivers were chosen, another station which a smaller value was chosen
@@ -234,12 +238,12 @@ five_rivers$id3 <- daily_runnoff_descriptive_statistics[, mean(max), by = id][or
 five_rivers$id4 <- info_for_project[,.(ID,Lat)][order(-Lat)][201,1]
 five_rivers$id5 <- info_for_project[,.(ID,Alt)][order(-Alt)][5,1]
 chosen_stations <- info_for_project[ID %in% five_rivers]
-chosen_stations
+knitr::kable(chosen_stations, caption = "chosen stations")
 ```
 
 ### Seasonal runnoff at monthly scale
-3 of the rivers, on the rhine, the sitter and the danube, show flat profiles over months, river glama is probably heavly influeced by snow melt due to large rises in runnoff in spring and summer months, as is the leuchstein river which 
-```{r, echo=FALSE}
+3 of the rivers, on the rhine, the sitter and the danube, show flat profiles over months, river glama is probably heavly influeced by snow melt due to large rises in runnoff in spring and summer months, as is the Luetshine river which, is a short river at high altitude
+```{r, echo=FALSE,  warning = FALSE, message = FALSE}
 position_in_annual_runoff <- daily_runoff[id == chosen_stations$ID[1] | id == chosen_stations$ID[2] | id == chosen_stations$ID[3] | id == chosen_stations$ID[4] | id == chosen_stations$ID[5]]
 monthly_average_discharge <- position_in_annual_runoff[,mean(value) ,by = .(id,month,year)]
 
@@ -248,7 +252,9 @@ ggplot(monthly_average_discharge, aes(x = factor(month), y = V1, group = month))
   facet_wrap(~id, scales = 'free') +
   xlab(label = "Month") +
   ylab(label = "Runoff (m3/s)") +
-  theme_bw()
+  ggtitle("montlhy runoff of chosen stations") +
+  theme_bw() 
+  
 ```
 
 ### correlation matrix
@@ -269,7 +275,7 @@ col3 <- colorRampPalette(c("red", "white", "blue"))
 col4 <- colorRampPalette(c("#7F0000", "red", "#FF7F00", "yellow", "#7FFF7F",
                            "cyan", "#007FFF", "blue", "#00007F"))
 whiteblack <- c("white", "black")
-corrplot(runoff_year_cor, order = "hclust", addrect = 2, col = col4(10), method = "number")
+corrplot(runoff_year_cor, order = "hclust", addrect = 2, col = col4(10), method = "number", title = "similarity between stations")
 ```
 
 ### regreesion during summer and winter season of chosen stations
@@ -300,6 +306,7 @@ ggplot(summer_runnof, aes(x = year, y = V1)) +
   scale_color_manual(values = colset_4[c(1, 2, 3, 4)]) +
   xlab(label = "Year") +
   ylab(label = "Runoff (m3/s)") +
+  ggtitle("summer runoff regression plots for chosen stations") +
   theme_bw()
 ggplot(winter_runnof, aes(x = year, y = V1)) +
   geom_line(col = colset_4[3], aes(group = 1))+
@@ -310,6 +317,7 @@ ggplot(winter_runnof, aes(x = year, y = V1)) +
   scale_color_manual(values = colset_4[c(1, 2, 3, 4)]) +
   xlab(label = "Year") +
   ylab(label = "Runoff (m3/s)") +
+  ggtitle("winter runoff regression plots for chosen stations") +
   theme_bw()
 ```
 
@@ -349,15 +357,16 @@ ggplot(to_plot, aes(season.1, V1, fill = period)) +
   facet_wrap(~id, scales = 'free_y') +
   xlab(label = "Season") +
   ylab(label = "Runoff (m3/s)") +
+  ggtitle("box plots for all stations") +
   theme_bw()
 
 to_plot2 <- to_plot[id %in% chosen_stations$ID]
-to_plot2
 ggplot(to_plot2, aes(season.1, V1, fill = period)) +
   geom_boxplot() +
   facet_wrap(~id, scales = 'free_y') +
   xlab(label = "Season") +
   ylab(label = "Runoff (m3/s)") +
+  ggtitle("box plots for chosen stations") +
   theme_bw()
 ```
 
