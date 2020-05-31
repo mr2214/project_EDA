@@ -7,6 +7,8 @@ colset_4 <-  c("#D35C37", "#BF9A77", "#D6C6B9", "#97B8C2")
 daily_runoff <- readRDS(file = './data/Data for final project-20200428/runoff_eu_day.rds')
 annual_runoff <- readRDS(file = './data/Data for final project-20200428/runoff_eu_year.rds')
 info_for_project <- readRDS(file = './data/Data for final project-20200428/runoff_eu_info.rds')
+daily_runnoff_descriptive_statistics <- readRDS(daily_runnoff_descriptive_statistics, file = "./data/daily_runoffds.rds")
+daily_runoff <- readRDS(file = "./data/daily_runoff.rds")
 unique(info_for_project$River)
 info_for_project$River
 plot(info_for_project$ID,info_for_project$Alt)
@@ -15,168 +17,142 @@ annual_runoff
 #some rivers heavilyy influnced by snowmelt during summer months, while some rivers recieve little/no snow melt
 characersitic_of_station_2$alt_range_class
 #river elbe, rivr danube, neckar, saale, dee (scotland)
-info_for_project
-elbe_position <- which(info_for_project$River == "ELBE RIVER")
-danube_position <- which(info_for_project$River == "DANUBE RIVER")
-neckar_position <- which(info_for_project$River == "NECKAR")
-saale_position <- which(info_for_project$River == "SAALE")
-dee_position <- which(info_for_project$River == "DEE (SCOTLAND)")
-dee_position
-new <- info_for_project[c(elbe_position,danube_position,neckar_position,saale_position,dee_position),]
-ids <- new[c(1,16,19,20,22),]
-ids
-ids$ID
-position_in_annual_runoff <- which(daily_runoff$id == ids$ID)
-position_in_annual_runoff
-runoff_5_rivers <- daily_runoff[position_in_annual_runoff,]
-runoff_5_rivers
-runoff_5_rivers$month <- format(as.Date(runoff_5_rivers$date), "%m")
-runoff_5_rivers$year <- format(as.Date(runoff_5_rivers$date), "%Y")
-str(runoff_5_rivers$month)
+#info_for_project
+#elbe_position <- which(info_for_project$River == "ELBE RIVER")
+#danube_position <- which(info_for_project$River == "DANUBE RIVER")
+#neckar_position <- which(info_for_project$River == "NECKAR")
+#saale_position <- which(info_for_project$River == "SAALE")
+#dee_position <- which(info_for_project$River == "DEE (SCOTLAND)")
+#dee_position
+#new <- info_for_project[c(elbe_position,danube_position,neckar_position,saale_position,dee_position),]
+#ids <- new[c(1,16,19,20,22),]
+#ids
+#ids$ID
+#position_in_annual_runoff <- which(daily_runoff$id == ids$ID)
+#position_in_annual_runoff
+#runoff_5_rivers <- daily_runoff[position_in_annual_runoff,]
+#runoff_5_rivers
+#runoff_5_rivers$month <- format(as.Date(runoff_5_rivers$date), "%m")
+#runoff_5_rivers$year <- format(as.Date(runoff_5_rivers$date), "%Y")
+#str(runoff_5_rivers$month)
+#
 
-roll_mean_discharge
-runoff_5_rivers[,by = id]
-ids
-elbe_river <- which(runoff_5_rivers$id == ids$ID[1])
-elbe_river <- runoff_5_rivers[elbe_river,]
-elbe_river
-runoff_5_rivers[]
-elbe_river_place <- which(elbe_river$year == 1994)
-elbe_river_place
-runoff_5_rivers <- as.data.table(runoff_5_rivers)
-runoff_5_rivers[,sum(value), by = .(year, id)]
-sum_yearly_discharge <- runoff_5_rivers[,sum(value), by = .(year, id)]
-sum_yearly_discharge
-elbe_roll_mean <- sum_yearly_discharge[1:107, .(zoo::rollmean(V1, 5),zoo::rollmean(V1, 10), zoo::rollmean(V1, 20))]
-elbe_roll_mean$V2 <- elbe_roll_mean$V2[98:103] <- NA
-elbe_roll_mean$V3 <- elbe_roll_mean$V3[88:103] <- NA
-elbe_roll_mean[98:103,2] <- NA
-elbe_roll_mean[88:103,3] <- NA
-elbe_roll_mean
+#roll_mean_discharge
+#r#unoff_5_rivers[,by = id]
+#ids
+#elbe_river <- which(runoff_5_rivers$id == ids$ID[1])
+#elbe_river <- runoff_5_rivers[elbe_river,]
+#elbe_river
+#runoff_5_rivers[]
+#elbe_river_place <- which(elbe_river$year == 1994)
+#elbe_river_place
+#runoff_5_rivers <- as.data.table(runoff_5_rivers)
+#runoff_5_rivers[,sum(value), by = .(year, id)]
+#sum_yearly_discharge <- runoff_5_rivers[,sum(value), by = .(year, id)]
+#sum_yearly_discharge
+#elbe_roll_mean <- sum_yearly_discharge[1:107, .(zoo::rollmean(V1, 5),zoo::rollmean(V1, 10), zoo::rollmean(V1, 20))]
+#elbe_roll_mean$V2 <- elbe_roll_mean$V2[98:103] <- NA
+#elbe_roll_mean$V3 <- elbe_roll_mean$V3[88:103] <- NA
+#elbe_roll_mean[98:103,2] <- NA
+#elbe_roll_mean[88:103,3] <- NA
+#elbe_roll_mean
 
-ggplot(data = elbe_roll_mean , aes(x = 1:103, y = V1))+
-  geom_point()
-ggplot(data = elbe_roll_mean , aes(x = 1:103, y = V2))+
-  geom_point()
-ggplot(data = elbe_roll_mean , aes(x = 1:103, y = V3))+
-  geom_point()
-runoff_5_rivers
-elbe_roll_mean <- runoff_5_rivers[1:107, .(zoo::rollmean(value, 5),zoo::rollmean(value, 10), zoo::rollmean(value, 20))]
+#ggplot(data = elbe_roll_mean , aes(x = 1:103, y = V1))+
+  #geom_point()
+#ggplot(data = elbe_roll_mean , aes(x = 1:103, y = V2))+
+  #geom_point()
+#ggplot(data = elbe_roll_mean , aes(x = 1:103, y = V3))+
+ # geom_point()
+#runoff_5_rivers
+#elbe_roll_mean <- runoff_5_rivers[1:107, .(zoo::rollmean(value, 5),zoo::rollmean(value, 10), zoo::rollmean(value, 20))]
 
-elbe_roll_mean[98:103,2] <- NA
-elbe_roll_mean[88:103,3] <- NA
-elbe_roll_mean
-ggplot(data = elbe_roll_mean , aes(x = 1:103, y = V1))+
-  geom_point()
-ggplot(data = elbe_roll_mean , aes(x = 1:103, y = V2))+
-  geom_point()
-ggplot(data = elbe_roll_mean , aes(x = 1:103, y = V3))+
-  geom_point()
-runoff_5_rivers <- runoff_5_rivers[value >= 0]
-monthly_average_discharge <- runoff_5_rivers[,mean(value) ,by = .(id,month,year)]
-monthly_average_discharge
-ggplot(monthly_average_discharge, aes(x = factor(month), y = V1, group = month)) +
-  geom_boxplot() +
-  facet_wrap(~id, scales = 'free') +
-  xlab(label = "Month") +
-  ylab(label = "Runoff (m3/s)") +
-  theme_bw()
-runoff_5_rivers
-yearly_annual_discharge_5_rivers <- runoff_5_rivers[, sum(value), by = .(id,year)]
-runnoff_year_mat <- dcast(yearly_annual_discharge_5_rivers, year~id)
-runnoff_year_mat
-runnoff_year_mat <- runnoff_year_mat[45:113,]
-runnoff_year_mat
-runoff_year_mat <- runnoff_year_mat[9202:24008,]
-runoff_year_cor <- cor(runnoff_year_mat[, -1], use = "pairwise.complete.obs")
-runoff_year_cor <- round(runoff_year_cor,2)
-to_plot <- melt(runoff_year_cor)
-to_plot
-
-
-col1 <- colorRampPalette(c("#7F0000", "red", "#FF7F00", "yellow", "white",
-                           "cyan", "#007FFF", "blue", "#00007F"))
-col2 <- colorRampPalette(c("#67001F", "#B2182B", "#D6604D", "#F4A582",
-                           "#FDDBC7", "#FFFFFF", "#D1E5F0", "#92C5DE",
-                           "#4393C3", "#2166AC", "#053061"))
-col3 <- colorRampPalette(c("red", "white", "blue")) 
-col4 <- colorRampPalette(c("#7F0000", "red", "#FF7F00", "yellow", "#7FFF7F",
-                           "cyan", "#007FFF", "blue", "#00007F"))
-whiteblack <- c("white", "black")
-corrplot(runoff_year_cor, order = "hclust", addrect = 2, col = col4(10), method = "number")
-
-runoff_5_rivers <- runoff_5_rivers[,-6]
-runoff_5_rivers
-runoff_5_rivers_2 <- runoff_5_rivers
-runoff_5_rivers_2
-runoff_5_rivers_2$month <- as.numeric(factor((runoff_5_rivers_2$month)))
-runoff_5_rivers_2[month == 1 | month == 2 | month == 3, season := factor('winter')]
-runoff_5_rivers_2[month == 7 | month == 8 | month == 9, season := factor('summer')]
-a <- runoff_5_rivers_2[,which(id != "6604800")]
-runoff_5_rivers_2
-runoff_4_rivers <- runoff_5_rivers_2[a,]
-runoff_4_rivers
-summer_runnof <- runoff_4_rivers[season == "summer" ]
-summer_runnof <- summer_runnof[,sum(value), by = .(year,id)]
-summer_runnof
-winter_runnof <- runoff_4_rivers[season == "winter" ]
-winter_runnof
-winter_runnof <- winter_runnof[,sum(value), by = .(year,id)]
-winter_runnof
-summer_runnof$year <- as.numeric(factor((summer_runnof$year)))
-winter_runnof$year <- as.numeric(factor((winter_runnof$year)))
+#elbe_roll_mean[98:103,2] <- NA
+#elbe_roll_mean[88:103,3] <- NA
+#elbe_roll_mean
+#ggplot(data = elbe_roll_mean , aes(x = 1:103, y = V1))+
+#  geom_point()
+#ggplot(data = elbe_roll_mean , aes(x = 1:103, y = V2))+
+#  geom_point()
+#ggplot(data = elbe_roll_mean , aes(x = 1:103, y = V3))+
+#  geom_point()
+#runoff_5_rivers <- runoff_5_rivers[value >= 0]
+#monthly_average_discharge <- runoff_5_rivers[,mean(value) ,by = .(id,month,year)]
+#monthly_average_discharge
+#ggplot(monthly_average_discharge, aes(x = factor(month), y = V1, group = month)) +
+#  geom_boxplot() +
+#  facet_wrap(~id, scales = 'free') +
+#  xlab(label = "Month") +
+#  ylab(label = "Runoff (m3/s)") +
+#  theme_bw()
+#runoff_5_rivers
+#yearly_annual_discharge_5_rivers <- runoff_5_rivers[, sum(value), by = .(id,year)]
+#runnoff_year_mat <- dcast(yearly_annual_discharge_5_rivers, year~id)
+#runnoff_year_mat
+#runnoff_year_mat <- runnoff_year_mat[45:113,]
+#runnoff_year_mat
+#runoff_year_mat <- runnoff_year_mat[9202:24008,]
+#runoff_year_cor <- cor(runnoff_year_mat[, -1], use = "pairwise.complete.obs")
+#runoff_year_cor <- round(runoff_year_cor,2)
+#to_plot <- melt(runoff_year_cor)
+#to_plot
 
 
-ggplot(summer_runnof, aes(x = year, y = V1)) +
-  geom_line(col = colset_4[3], aes(group = 1))+
-  geom_point(col = colset_4[3])+
-  facet_wrap(~id, scales = 'free') +
-  geom_smooth(method = 'lm', formula = y~x, se = 0, col = colset_4[1]) +
-  geom_smooth(method = 'loess', formula = y~x, se = 0, col = colset_4[4]) +
-  scale_color_manual(values = colset_4[c(1, 2, 3, 4)]) +
-  xlab(label = "Year") +
-  ylab(label = "Runoff (m3/s)") +
-  theme_bw()
-ggplot(winter_runnof, aes(x = year, y = V1)) +
-  geom_line(col = colset_4[3], aes(group = 1))+
-  geom_point(col = colset_4[3])+
-  facet_wrap(~id, scales = 'free') +
-  geom_smooth(method = 'lm', formula = y~x, se = 0, col = colset_4[1]) +
-  geom_smooth(method = 'loess', formula = y~x, se = 0, col = colset_4[4]) +
-  scale_color_manual(values = colset_4[c(1, 2, 3, 4)]) +
-  xlab(label = "Year") +
-  ylab(label = "Runoff (m3/s)") +
-  theme_bw()
+#col1 <- colorRampPalette(c("#7F0000", "red", "#FF7F00", "yellow", "white",
+     #                      "cyan", "#007FFF", "blue", "#00007F"))
+#col2 <- colorRampPalette(c("#67001F", "#B2182B", "#D6604D", "#F4A582",
+    #                       "#FDDBC7", "#FFFFFF", "#D1E5F0", "#92C5DE",
+   #                        "#4393C3", "#2166AC", "#053061"))
+#col3 <- colorRampPalette(c("red", "white", "blue")) 
+#col4 <- colorRampPalette(c("#7F0000", "red", "#FF7F00", "yellow", "#7FFF7F",
+  #                         "cyan", "#007FFF", "blue", "#00007F"))
+#whiteblack <- c("white", "black")
+#c#orrplot(runoff_year_cor, order = "hclust", addrect = 2, col = col4(10), method = "number")
+
+#runoff_5_rivers <- runoff_5_rivers[,-6]
+#runoff_5_rivers
+#runoff_5_rivers_2 <- runoff_5_rivers
+#runoff_5_rivers_2
+#runoff_5_rivers_2$month <- as.numeric(factor((runoff_5_rivers_2$month)))
+#runoff_5_rivers_2[month == 1 | month == 2 | month == 3, season := factor('winter')]
+#runoff_5_rivers_2[month == 7 | month == 8 | month == 9, season := factor('summer')]
+#a <- runoff_5_rivers_2[,which(id != "6604800")]
+#runoff_5_rivers_2
+#runoff_4_rivers <- runoff_5_rivers_2[a,]
+#runoff_4_rivers
+#summer_runnof <- runoff_4_rivers[season == "summer" ]
+#summer_runnof <- summer_runnof[,sum(value), by = .(year,id)]
+#summer_runnof
+#winter_runnof <- runoff_4_rivers[season == "winter" ]
+#winter_runnof
+#winter_runnof <- winter_runnof[,sum(value), by = .(year,id)]
+#winter_runnof
+#summer_runnof$year <- as.numeric(factor((summer_runnof$year)))
+#winter_runnof$year <- as.numeric(factor((winter_runnof$year)))
+
+
+#ggplot(summer_runnof, aes(x = year, y = V1)) +
+ # geom_line(col = colset_4[3], aes(group = 1))+
+  #geom_point(col = colset_4[3])+
+  #facet_wrap(~id, scales = 'free') +
+  #geom_smooth(method = 'lm', formula = y~x, se = 0, col = colset_4[1]) +
+  #geom_smooth(method = 'loess', formula = y~x, se = 0, col = colset_4[4]) +
+  #scale_color_manual(values = colset_4[c(1, 2, 3, 4)]) +
+  #xlab(label = "Year") +
+  #ylab(label = "Runoff (m3/s)") +
+  #theme_bw()
+#ggplot(winter_runnof, aes(x = year, y = V1)) +
+ # geom_line(col = colset_4[3], aes(group = 1))+
+  #geom_point(col = colset_4[3])+
+  #facet_wrap(~id, scales = 'free') +
+  #geom_smooth(method = 'lm', formula = y~x, se = 0, col = colset_4[1]) +
+  #geom_smooth(method = 'loess', formula = y~x, se = 0, col = colset_4[4]) +
+  #scale_color_manual(values = colset_4[c(1, 2, 3, 4)]) +
+  #xlab(label = "Year") +
+  #ylab(label = "Runoff (m3/s)") +
+  #theme_bw()
+# since finding data on dams(when they were built) was not posible made more sense to pick stations due to statisical reasons
 #=======================================================
-info_for_project
-summer_runnof
-daily_runoff
-daily_runoff <- daily_runoff[value >= 0]
-unique(daily_runoff$id)
-number_of_entries <- daily_runoff[, .N, by = id]
-number_of_entries <- number_of_entries[N > 36500]
-number_of_entries
 
-
-daily_runoff$month <- as.numeric(factor((daily_runoff$month)))
-daily_runoff[month == 1 | month == 2 | month == 3, season := factor('winter')]
-daily_runoff[month == 7 | month == 8 | month == 9, season := factor('summer')]
-all_summer_runoff <- daily_runoff[season == "summer" ]  
-all_summer_runoff <- all_summer_runoff[,sum(value), by = .(year,id)]
-all_summer_runoff
-unique(all_summer_runoff$id)
-ggplot(all_summer_runoff, aes(x = year, y = V1)) +
-  geom_line(col = colset_4[3], aes(group = 1))+
-  geom_point(col = colset_4[3])+
-  facet_wrap(~id, scales = 'free') +
-  geom_smooth(method = 'lm', formula = y~x, se = 0, col = colset_4[1]) +
-  geom_smooth(method = 'loess', formula = y~x, se = 0, col = colset_4[4]) +
-  scale_color_manual(values = colset_4[c(1, 2, 3, 4)]) +
-  xlab(label = "Year") +
-  ylab(label = "Runoff (m3/s)") +
-  theme_bw()
-daily_runnoff_descriptive_statistics
-info_for_project
 #high mean value, #high sd, #high max, #high long, #high altitude
 # take 20 random samples(so assess similarity to other data)
 #==============================
@@ -201,17 +177,18 @@ analysis_of_means[order(-V1)]
 five_rivers <- data.table()
 str(analysis_of_means[order(-V1)])
 analysis_of_means[order(-V1)][10]
-high_means <- analysis_of_means[order(-V1)][c(1:10),1]
+high_means <- analysis_of_means[order(-V1)][c(1:30),1]
 (high_means)
 high_means[1]
 number_of_entries
 a <- data.table()
-for (i in 1:10) {
+for (i in 1:30) {
   print(high_means[i] %in% number_of_entries$id)
   print(i)
 }
-high_means[6]
-five_rivers$id <- high_means[6]
+
+high_means[14]
+five_rivers$id <- high_means[20]
 daily_runnoff_descriptive_statistics
 sd <- daily_runnoff_descriptive_statistics[, mean(sd), by = id]
 sd[order((-V1))][1:10, 1][9]
@@ -251,12 +228,11 @@ daily_runoff[id %in% five_rivers]
 info_for_project
 
 chosen_stations <- info_for_project[ID %in% five_rivers]
+chosen_stations # selecting statins based on certain statisitcal or geogrpahical characterisitcs
 chosen_stations
-
+daily_runoff
 position_in_annual_runoff <- daily_runoff[id == chosen_stations$ID[1] | id == chosen_stations$ID[2] | id == chosen_stations$ID[3] | id == chosen_stations$ID[4] | id == chosen_stations$ID[5]]
-position_in_annual_runoff
 
-runoff_5_rivers <- runoff_5_rivers[value >= 0]
 monthly_average_discharge <- position_in_annual_runoff[,mean(value) ,by = .(id,month,year)]
 monthly_average_discharge
 ggplot(monthly_average_discharge, aes(x = factor(month), y = V1, group = month)) +
@@ -265,7 +241,7 @@ ggplot(monthly_average_discharge, aes(x = factor(month), y = V1, group = month))
   xlab(label = "Month") +
   ylab(label = "Runoff (m3/s)") +
   theme_bw()
-runoff_5_rivers
+#different profiles of various chosen rivers
 yearly_annual_discharge_5_rivers <- position_in_annual_runoff[, sum(value), by = .(id,year)]
 yearly_annual_discharge_5_rivers
 runnoff_year_mat <- dcast(yearly_annual_discharge_5_rivers, year~id)
@@ -288,6 +264,7 @@ col4 <- colorRampPalette(c("#7F0000", "red", "#FF7F00", "yellow", "#7FFF7F",
                            "cyan", "#007FFF", "blue", "#00007F"))
 whiteblack <- c("white", "black")
 corrplot(runoff_year_cor, order = "hclust", addrect = 2, col = col4(10), method = "number")
+#station id 6731400 and station 6939540, are most different
 position_in_annual_runoff
 #runoff_5_rivers <- runoff_5_rivers[,-6]
 #runoff_5_rivers
@@ -320,7 +297,9 @@ ggplot(summer_runnof, aes(x = year, y = V1)) +
   scale_color_manual(values = colset_4[c(1, 2, 3, 4)]) +
   xlab(label = "Year") +
   ylab(label = "Runoff (m3/s)") +
-  theme_bw()
+  theme_bw()+
+  ggtitle("regression plots for summer runoff at chosen stations")
+# 6939540 shows an increasing trend, while other stations show a falling trend
 ggplot(winter_runnof, aes(x = year, y = V1)) +
   geom_line(col = colset_4[3], aes(group = 1))+
   geom_point(col = colset_4[3])+
@@ -330,7 +309,8 @@ ggplot(winter_runnof, aes(x = year, y = V1)) +
   scale_color_manual(values = colset_4[c(1, 2, 3, 4)]) +
   xlab(label = "Year") +
   ylab(label = "Runoff (m3/s)") +
-  theme_bw()
+  theme_bw()+
+  ggtitle("regression plots for winter runoff at chosen stations")
 number_of_entries$id
 all_data_100plusyears <- daily_runoff[id %in% number_of_entries$id]
 daily_runnoff_descriptive_statistics
@@ -359,10 +339,10 @@ summer_test
 unique(summer_test$id)
 ggplot(summer_test[year > 1910 | year < 2000], aes(x = year, y = value_norm, col = id, group = id)) +
   geom_smooth(method = 'loess', formula = y~x, se = 0) + 
-  ggtitle('Winter runoff') +
   xlab(label = "Year") +
   ylab(label = "Runoff (m3/s)") +
-  theme_bw()
+  theme_bw()+
+  ggtitle("regression plots for summer runoff at low altitudes")
 summer_test[year == "2009"][value_norm > 0.2]$id
 info_for_project[ID %in% summer_test[year == "2009"][value_norm > 0.2]$id] #sugests high lattidude experiance differencet conditions
 info_for_project[ID %in% summer_test[year == "2009"][value_norm > 0]$id]
@@ -373,24 +353,26 @@ summer_test <- summer[id %in% test]
 summer_test
 unique(summer_test$id)
 ggplot(summer_test[year > 1910 | year < 2000], aes(x = year, y = value_norm, col = id, group = id)) +
-  geom_smooth(method = 'loess', formula = y~x, se = 0) + 
-  ggtitle('Winter runoff') +
+  geom_smooth(method = 'loess', formula = y~x, se = 0) +
   xlab(label = "Year") +
   ylab(label = "Runoff (m3/s)") +
-  theme_bw()
+  theme_bw()+
+  ggtitle("regression plots for summer runoff high altitude")
 
 low_lat <- (info_for_project[order(-Lat)])
 low_lat_stations <- unique(low_lat[170:208,]$ID)
+low_lat_stations
+low_lat
 test <- unique(summer[id %in% low_lat_stations]$id)
 test
 summer_test <- summer[id %in% test]
 summer_test
 ggplot(summer_test[year > 1910 | year < 2000], aes(x = year, y = value_norm, col = id, group = id)) +
   geom_smooth(method = 'loess', formula = y~x, se = 0) + 
-  ggtitle('Winter runoff') +
   xlab(label = "Year") +
   ylab(label = "Runoff (m3/s)") +
-  theme_bw()
+  theme_bw()+
+  ggtitle("regression plots for summer runoff at low latitude(southern europe)")
 low_lat <- (info_for_project[order(-Lat)])
 high_lat_stations <- unique(low_lat[1:100,]$ID)
 test <- unique(summer[id %in% high_lat_stations]$id)
@@ -399,10 +381,10 @@ summer_test <- summer[id %in% test]
 summer_test
 ggplot(summer_test[year > 1910 | year < 2000], aes(x = year, y = value_norm, col = id, group = id)) +
   geom_smooth(method = 'loess', formula = y~x, se = 0) + 
-  ggtitle('Winter runoff') +
   xlab(label = "Year") +
   ylab(label = "Runoff (m3/s)") +
-  theme_bw()
+  theme_bw()+
+  ggtitle("regression plots for summer runoff at high latitudes")
 winter <- yearly_annual_data[season == "winter"]
 final_year <- summer_test[year == 2009]
 str(final_year$value_norm)
@@ -425,10 +407,10 @@ test <- unique(winter[id %in% low_alt_stations]$id)
 winter_test <- winter[id %in% test]
 ggplot(winter_test[year > 1910 | year < 2000], aes(x = year, y = value_norm, col = id, group = id)) +
   geom_smooth(method = 'loess', formula = y~x, se = 0) + 
-  ggtitle('Winter runoff') +
   xlab(label = "Year") +
   ylab(label = "Runoff (m3/s)") +
-  theme_bw()
+  theme_bw()+
+  ggtitle("regression plots for winter runoff at low altitude")
 
 n_stations_winter <- unique(winter$id)
 
@@ -443,7 +425,8 @@ ggplot(winter_test[year > 1910 | year < 2000], aes(x = year, y = value_norm, col
   ggtitle('Winter runoff') +
   xlab(label = "Year") +
   ylab(label = "Runoff (m3/s)") +
-  theme_bw()
+  theme_bw()+
+  ggtitle("regression plots for winter runoff at high altitude")
 ###########
 low_long <- (info_for_project[order(-Lon)])
 low_long
@@ -454,10 +437,10 @@ summer_test <- summer[id %in% test]
 summer_test
 ggplot(summer_test[year > 1910 | year < 2000], aes(x = year, y = value_norm, col = id, group = id)) +
   geom_smooth(method = 'loess', formula = y~x, se = 0) + 
-  ggtitle('Winter runoff') +
   xlab(label = "Year") +
   ylab(label = "Runoff (m3/s)") +
-  theme_bw()
+  theme_bw()+
+  ggtitle("regression plots for summer runoff at high longitude")
 low_long <- (info_for_project[order(-Lon)])
 low_long
 low_long_stations <- unique(low_lat[160:208,]$ID)
@@ -467,16 +450,11 @@ summer_test <- summer[id %in% test]
 summer_test
 ggplot(summer_test[year > 1910 | year < 2000], aes(x = year, y = value_norm, col = id, group = id)) +
   geom_smooth(method = 'loess', formula = y~x, se = 0) + 
-  ggtitle('Winter runoff') +
+  ggtitle('regression plots for summer runoff at low longitude') +
   xlab(label = "Year") +
   ylab(label = "Runoff (m3/s)") +
   theme_bw()
-?scale_color_manual
-colorRampPalette(colset_4)
-?geom_smooth
-info_for_project
-daily_runnoff_descriptive_statistics
-unique(summer$id)
+
 winter
 winter2 <- winter[year > 1950]
 winter2
@@ -502,4 +480,42 @@ ggplot(to_plot, aes(season.1, V1, fill = period)) +
   xlab(label = "Season") +
   ylab(label = "Runoff (m3/s)") +
   theme_bw()
-
+to_plot2 <- to_plot[id %in% chosen_stations$ID]
+to_plot2
+ggplot(to_plot2, aes(season.1, V1, fill = period)) +
+  geom_boxplot() +
+  facet_wrap(~id, scales = 'free_y') +
+  xlab(label = "Season") +
+  ylab(label = "Runoff (m3/s)") +
+  theme_bw()
+chosen_stations$ID
+daily_runoff
+daily_runoff_chosen_stations <- daily_runoff[id %in% chosen_stations$ID]
+daily_runoff_chosen_stations <- daily_runoff_chosen_stations[, sum(value), by = .(id, year)] 
+data <- daily_runoff_chosen_stations[, zoo::rollmean(V1, 20), by = id]
+unique(data$id)
+first <- data[ id == "6142200"]
+alpha <- mean(first$V1)
+beta <- sd(first$V1)
+first$change <- (first$V1 - alpha)/(beta) 
+first
+second <- data[ id == "6335060"]
+third <- data[ id == "64425000"]
+fourth <- data[ id == "6935412"]
+fifht <- data[ id == "6939540"]
+length(first$id)
+first
+fourth
+third
+fifht
+ggplot(first, (aes(1:length(first$id), change))) +
+  geom_line()
+ggplot(second, (aes(1:length(second$id), V1))) +
+  geom_line()
+#ggplot(third, (aes(1:length(third$id)), V1)) +
+  geom_line()
+ggplot(fourth, (aes(1:length(fourth$id), V1))) +
+  geom_line()
+ggplot(fifht, (aes(1:length(fifht$id), V1))) +
+  geom_line()
+# taking roll means over long period of time shows how large changes in the mean have occured over time, however, wheter changes in the mean are due to human influnce or not is not clear
