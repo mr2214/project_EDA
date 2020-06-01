@@ -25,13 +25,13 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Exploratory data analysis 
-In this project, I inversitgated over 150 river stations in europe, and issuses relating to changes in seasonal discharge, particularly after 1980
+In this project, I inversitgated over 150 river stations in europe, and issuses relating to changes in seasonal discharge, particularly if changes in mean runoff have taken place over the last 40 years
 
 
 ## analysis of stations
 
 ### station location
-stations are located in europe, particularly density of location in mainland western europe and scandinavia, there are some stations sparely distributed in Russia and eastern europe, and the British Isles and Iceland.
+stations are located in europe, with particularly density of location in mainland western europe and scandinavia, there are some stations sparely distributed in Russia and eastern europe, and the British Isles and Iceland.
 ```{r, echo = FALSE}
 info_for_project <- readRDS(file = './data/Data for final project-20200428/runoff_eu_info.rds')
 df <- data.frame(longitude = info_for_project$Lon, 
@@ -52,7 +52,7 @@ knitr::kable(info_for_project[, .N, by = River], caption = "number of stations p
 ```
 
 ### Distribution in space of stations
-There is a large cluster of stations around 45-50 degrees in latitude and 5 to 15 degrees in longitude, theses would correspond to rivers mainly flowing out of alpine regions in Switzerland and Germany, with higher altitudes, as latitude increases, the altitude decreases, this is typical of  Germany, since the coastline is in the north.
+There is a large cluster of stations around 45-50 degrees in latitude and 5 to 15 degrees in longitude, these stations would correspond to rivers mainly flowing out of alpine regions in Switzerland and Germany.
 ```{r, echo=FALSE, warning=FALSE}
 lon_lat_alt <- ggplot(data = info_for_project, aes(x = Lat, y = Lon, size = Alt)) +
   geom_point() +
@@ -60,14 +60,11 @@ lon_lat_alt <- ggplot(data = info_for_project, aes(x = Lat, y = Lon, size = Alt)
 lon_lat_alt
 lon_lat_alt + coord_cartesian(xlim = c(45, 55), ylim = c(0, 20))+
   ggtitle("Plot of geographical location and altitude of stations--high density of stations(alps)")
-ggplot(data = info_for_project, aes(x = 1:208, y = N.Years)) +
-   geom_point()
-
 theme_set(theme_bw())
 ```
 
-### distribution by nmber of years of recorded data
-while this is from info given, actual dataset may differ
+### distribution by number of years of recorded data
+while this is from information given, the actual raw dataset may differ.
 ```{r, echo=FALSE, warning = FALSE, message = FALSE}
 ggplot(info_for_project, aes(x = 1:208, y = N.Years)) + 
   geom_bar(stat = "identity", width = .5, fill = "tomato3") + 
@@ -133,7 +130,7 @@ daily_runnoff_descriptive_statistics[year < 1980, year_class := factor('Pre 1980
 ```
 
 ### percantage change in ratio
-calculating the mean of the ratios of max/mean and min/mean, for the period befor 1980 and after 1980, then calculating the difference between values shows changes in runoff post 1980 relative to pre 1980
+calculating the mean of the ratios of max/mean and min/mean, for the period before 1980 and after 1980, then calculating the difference between values shows changes in runoff post 1980 relative to pre 1980
 ```{r, echo=FALSE}
 change_in_ratio <- daily_runnoff_descriptive_statistics[, .(mean(meanmaxratio), mean(meanminratio)), by = .(id, year_class)]
 change_in_ratio <- change_in_ratio[-1,]
@@ -181,7 +178,7 @@ knitr::kable(summer_winter, caption = "investigating changes in seasonal runnoff
 ```
 
 ### percentage change
-plotting reulsts, in winter, runnoff has increased over the period 1980-present, this relationship is unclear in the summer period with different rivers showing falls and rises, firther investigations would be needed to indentify why this result exists
+plotting reulsts, in winter, runnoff has increased over the period 1980-present, this relationship is unclear in the summer period with different rivers showing falls and rises, further investigations would be needed to indentify why this result exists
 ```{r, echo=FALSE, fig.height=15, warning=FALSE}
 percentage_change <- c()
 for (i in 1:length(rownames(summer_winter))) {
@@ -217,8 +214,8 @@ while there are no dams between Vienna and Bratislava, the danube has many dams 
 
 rhine – upper parts of the rhine have many dams
 sitter – 11 hydroelectric plants along the river 
-LUETSCHINE - a small river heading to a lkae, in high altitude influenced heavily by snowmelt
-glama – many power stations have been built along the river.
+LUETSCHINE - a small river heading to a lake, in high altitude influenced heavily by snowmelt
+glama – many power stations have been built along the river, in Sweden.
 
 I chose stations based on large mean values, large standard deviations, large altitude, high latitude, and high max values, were duplicate rivers were chosen, another station which a smaller value was chosen
 ```{r, echo=FALSE}
@@ -242,7 +239,7 @@ knitr::kable(chosen_stations, caption = "chosen stations")
 ```
 
 ### Seasonal runnoff at monthly scale
-3 of the rivers, on the rhine, the sitter and the danube, show flat profiles over months, river glama is probably heavly influeced by snow melt due to large rises in runnoff in spring and summer months, as is the Luetshine river which, is a short river at high altitude
+3 of the rivers, on the rhine, the sitter and the danube, show flat profiles over months (balanced between greater precipitaiton in the winter and more snowmelt during summer), river glama is probably heavly influeced by snow melt due to large rises in runnoff in spring and summer months, as is the Luetshine river which, is a short river at high altitude.
 ```{r, echo=FALSE,  warning = FALSE, message = FALSE}
 position_in_annual_runoff <- daily_runoff[id == chosen_stations$ID[1] | id == chosen_stations$ID[2] | id == chosen_stations$ID[3] | id == chosen_stations$ID[4] | id == chosen_stations$ID[5]]
 monthly_average_discharge <- position_in_annual_runoff[,mean(value) ,by = .(id,month,year)]
@@ -258,7 +255,7 @@ ggplot(monthly_average_discharge, aes(x = factor(month), y = V1, group = month))
 ```
 
 ### correlation matrix
-glama river is highly uncorrelated with the other rivers
+glama river is highly uncorrelated with the other rivers.
 ```{r, echo=FALSE, message=FALSE}
 yearly_annual_discharge_5_rivers <- position_in_annual_runoff[, sum(value), by = .(id,year)]
 runnoff_year_mat <- dcast(yearly_annual_discharge_5_rivers, year~id)
@@ -279,7 +276,7 @@ corrplot(runoff_year_cor, order = "hclust", addrect = 2, col = col4(10), method 
 ```
 
 ### regreesion during summer and winter season of chosen stations
-winter runoff is increasing as a function of time- espcially at river glama, in summer runnoff, runnoff is faling except for station luechine
+winter runoff is increasing as a function of time- espcially at river glama. In summer runnoff, runnoff is faling except for station luetschine
 ```{r, echo=FALSE}
 colset_4 <-  c("#D35C37", "#BF9A77", "#D6C6B9", "#97B8C2")
 runoff_5_rivers_2 <- position_in_annual_runoff
