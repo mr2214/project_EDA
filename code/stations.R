@@ -36,3 +36,4 @@ ggplot(info_for_project, aes(x = 1:208, y = N.Years)) +
        caption="source: https://www.bafg.de/GRDC/EN/01_GRDC/grdc_node.html") + 
   theme(axis.text.x = element_text(angle=65, vjust=0.6))
 # with a few exceptions most stations have around 90to 100 years of observations
+
