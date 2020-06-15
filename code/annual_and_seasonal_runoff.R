@@ -27,22 +27,22 @@ daily_runnoff_descriptive_statistics$range <- daily_runnoff_descriptive_statisti
 daily_runnoff_descriptive_statistics
 #savedaily_runoff <- saveRDS(daily_runnoff_descriptive_statistics, file = "./data/daily_runoffds.rds")
 yearly_summary <- daily_runnoff_descriptive_statistics[, .(mean(mean), mean(max), mean(min), mean(sd), mean(median)), by = id]
-colnames(yearly_summary) <-  c("id","mean","max","min","sd","mediam")
+colnames(yearly_summary) <-  c("id", "mean", "max", "min", "sd", "mediam")
 yearly_summary
 characersitic_of_station <- daily_runnoff_descriptive_statistics[, .(max(range), min(range)), by = id]
-colnames(characersitic_of_station) <- c("ID","max_range", "min_range")
+colnames(characersitic_of_station) <- c("ID", "max_range", "min_range")
 characersitic_of_station$ID <- as.numeric(characersitic_of_station$ID)
 characersitic_of_station
 characersitic_of_station_2 <- merge(characersitic_of_station,info_for_project)
-characersitic_of_station_2 <- characersitic_of_station_2[,c(1,2,3,10)]
+characersitic_of_station_2 <- characersitic_of_station_2[, c(1, 2, 3, 10)]
 characersitic_of_station_2
-ggplot(characersitic_of_station_2, aes(x=1:202, y = max_range)) +
+ggplot(characersitic_of_station_2, aes( x = 1:202, y = max_range)) +
   geom_point()
 # data could be splti to 0:2500 = low, 2500:5000 = midian, >5000 = high
-ggplot(characersitic_of_station_2, aes(x=1:202, y = min_range)) +
+ggplot(characersitic_of_station_2, aes(x = 1:202, y = min_range)) +
   geom_point()
 # data could be split to 0:500 = low,   500:1000 = median, >1000 high
-ggplot(characersitic_of_station_2, aes(x=1:202, y = Alt)) +
+ggplot(characersitic_of_station_2, aes(x = 1:202, y = Alt)) +
   geom_point()
 # data could be split 0:200 = low, 200:600 = mediam, >600 = high
 characersitic_of_station_2[max_range < 2500, max_range_class := factor('low')]
@@ -62,7 +62,7 @@ daily_runnoff_descriptive_statistics[year < 1980, year_class := factor('Pre 1980
 daily_runnoff_descriptive_statistics
 change_in_ratio <- daily_runnoff_descriptive_statistics[, .(mean(meanmaxratio), mean(meanminratio)), by = .(id, year_class)]
 # calculates mean/max and mean/min averages over time period pre and post 1980
-unique(change_in_ratio[,1])
+unique(change_in_ratio[, 1])
 change_in_ratio[, year_class]
 change_in_ratio <- change_in_ratio[-1,]
 change_in_ratio$id
@@ -72,35 +72,35 @@ meanmax_difference <- c()
 change_in_ratio
 length(rownames(change_in_ratio))
 for (i in 1:length(rownames(change_in_ratio))) {
-  meanmax_difference[i] <- change_in_ratio$V1[(2 * i)] - change_in_ratio$V1[((2 * i)-1)]
+  meanmax_difference[i] <- change_in_ratio$V1[(2 * i)] - change_in_ratio$V1[((2 * i) - 1)]
 }
 meanmax_difference <- meanmax_difference[1:200]
 meanmin_difference <- c()
 for (i in 1:length(rownames(change_in_ratio))) {
-  meanmin_difference[i] <- change_in_ratio$V1[(2 * i)] - change_in_ratio$V1[((2 * i)-1)]
+  meanmin_difference[i] <- change_in_ratio$V1[(2 * i)] - change_in_ratio$V1[((2 * i) - 1)]
 }
 meanmin_difference <- meanmin_difference[1:200]
 meanmin_difference
 
-print(unique(change_in_ratio[,1]), topn = 201)
+print(unique(change_in_ratio[, 1]), topn = 201)
 length(meanmax_difference)
-results <- data.table(meanmax_difference, meanmin_difference, unique(change_in_ratio[,1]))
+results <- data.table(meanmax_difference, meanmin_difference, unique(change_in_ratio[, 1]))
 str(results)
 colnames(results) <- c("meanmax_difference", "meanmin_difference", "ID")
 characersitic_of_station_2[120,]
-characersitic_of_station_2 <- characersitic_of_station_2[-c(1,120),]
+characersitic_of_station_2 <- characersitic_of_station_2[-c(1, 120),]
 characersitic_of_station_2
 results$ID <- as.numeric(results$ID)
 results_2 <- merge(characersitic_of_station_2,results)
 results_2
-results_2 <- results_2[,c(1,5,6,7,8,9)]
+results_2 <- results_2[,c(1, 5, 6, 7, 8, 9)]
 results_2
 maxrangeclass_change <- results_2[, mean(meanmax_difference), by = max_range_class]
 minrangeclass_change <- results_2[, mean(meanmax_difference), by = min_range_class][1:3,]
-altrangeclass_change <- results_2[, mean(meanmax_difference), by = alt_range_class][c(1,3,4),]
+altrangeclass_change <- results_2[, mean(meanmax_difference), by = alt_range_class][c(1, 3, 4),]
 maxrangeclass_change_min <- results_2[, mean(meanmin_difference), by = max_range_class]
 minrangeclass_change_min <- results_2[, mean(meanmin_difference), by = min_range_class][1:3]
-altrangeclass_change_min <- results_2[, mean(meanmin_difference), by = alt_range_class][c(1,3,4),]
+altrangeclass_change_min <- results_2[, mean(meanmin_difference), by = alt_range_class][c(1, 3, 4),]
 daily_runoff$month <- as.numeric(daily_runoff$month)
 daily_runoff[(month < 4), season := factor('winter')]
 daily_runoff[(month > 6) & (month < 10), season := factor('summer')]
@@ -127,15 +127,15 @@ summer_winter <- summer_winter[-637,]
 summer_winter
 percentage_change <- c()
 for (i in 1:length(rownames(summer_winter))) {
-  percentage_change[i] <- 100*(summer_winter$V1[(2 * i)] - summer_winter$V1[((2 * i)-1)])/(summer_winter$V1[((2 * i)-1)])
+  percentage_change[i] <- 100 * (summer_winter$V1[(2 * i)] - summer_winter$V1[((2 * i)-1)])/(summer_winter$V1[((2 * i) - 1)])
 }
 winter <- percentage_change[1:200]
 summer <- percentage_change[201:400]
-results_3 <- data.table(unique(summer_winter[,1]), winter, summer)
+results_3 <- data.table(unique(summer_winter[, 1]), winter, summer)
 results_3
 results_3$ID_type_winter <- ifelse(winter < 0, "below", "above")
-ggplot(results_3, aes(x=id, y=winter, label=winter)) + 
-  geom_bar(stat='identity', aes(fill=ID_type_winter), width=.5)  +
+ggplot(results_3, aes(x = id, y = winter, label = winter)) + 
+  geom_bar(stat='identity', aes(fill = ID_type_winter), width = .5)  +
                     scale_fill_manual(name="percentage change", 
                                       labels = c("Positive", "Negitive"), 
                                       values = c("above"="#00ba38", "below"="#f8766d")) + 
@@ -144,9 +144,9 @@ ggplot(results_3, aes(x=id, y=winter, label=winter)) +
                       coord_flip()
                     
 results_3$ID_type_summer <- ifelse(summer < 0, "below", "above")
-ggplot(results_3, aes(x=id, y=summer, label=summer)) + 
-  geom_bar(stat='identity', aes(fill=ID_type_summer), width=.5)  +
-  scale_fill_manual(name="percentage change", 
+ggplot(results_3, aes(x = id, y = summer, label = summer)) + 
+  geom_bar(stat = 'identity', aes(fill = ID_type_summer), width = .5)  +
+  scale_fill_manual(name = "percentage change", 
                     labels = c("Positive", "Negitive"), 
                     values = c("above"="#00ba38", "below"="#f8766d")) + 
   labs(subtitle="percentage change of mean runnoff at stations before and after 1980", 

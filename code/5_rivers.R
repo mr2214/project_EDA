@@ -166,7 +166,7 @@ number_of_entries
 analysis_of_means <- daily_runnoff_descriptive_statistics[, mean(mean), by = id]
 analysis_of_means
 daily_runnoff_descriptive_statistics
-test <- daily_runnoff_descriptive_statistics[, mean(sd), by = id][order(-V1)][1:12,1]
+test <- daily_runnoff_descriptive_statistics[, mean(sd), by = id][order(-V1)][1:12, 1]
 test
 test$id
 info_for_project[ID %in% test$id]
@@ -177,7 +177,7 @@ analysis_of_means[order(-V1)]
 five_rivers <- data.table()
 str(analysis_of_means[order(-V1)])
 analysis_of_means[order(-V1)][10]
-high_means <- analysis_of_means[order(-V1)][c(1:30),1]
+high_means <- analysis_of_means[order(-V1)][c(1:30), 1]
 (high_means)
 high_means[1]
 number_of_entries
@@ -207,7 +207,7 @@ daily_runnoff_descriptive_statistics[, mean(max), by = id][order(-V1)][5,]
 five_rivers$id3 <- daily_runnoff_descriptive_statistics[, mean(max), by = id][order(-V1)][5,1]
 info_for_project[,.(ID,Lat)][order(-Lat)][199:208,1]
 for (i in 1:10) {
-  print(info_for_project[,.(ID,Lat)][order(-Lat)][199:208,1][i] %in% number_of_entries$id)
+  print(info_for_project[,.(ID,Lat)][order(-Lat)][199:208, 1][i] %in% number_of_entries$id)
   print(i)
 }
 info_for_project
@@ -221,8 +221,8 @@ for (i in 1:10) {
   print(info_for_project[,.(ID,Alt)][order(-Alt)][1:10,1][i] %in% number_of_entries$id)
   print(i)
 }
-five_rivers$id5 <- info_for_project[,.(ID,Alt)][order(-Alt)][5,1]
-  info_for_project[,.(ID,Alt)][order(-Alt)][10,1]
+five_rivers$id5 <- info_for_project[,.(ID,Alt)][order(-Alt)][5, 1]
+  info_for_project[,.(ID,Alt)][order(-Alt)][10, 1]
 five_rivers
 daily_runoff[id %in% five_rivers]
 info_for_project
@@ -233,7 +233,7 @@ chosen_stations
 daily_runoff
 position_in_annual_runoff <- daily_runoff[id == chosen_stations$ID[1] | id == chosen_stations$ID[2] | id == chosen_stations$ID[3] | id == chosen_stations$ID[4] | id == chosen_stations$ID[5]]
 
-monthly_average_discharge <- position_in_annual_runoff[,mean(value) ,by = .(id,month,year)]
+monthly_average_discharge <- position_in_annual_runoff[,mean(value) ,by = .(id, month, year)]
 monthly_average_discharge
 ggplot(monthly_average_discharge, aes(x = factor(month), y = V1, group = month)) +
   geom_boxplot() +
@@ -242,14 +242,14 @@ ggplot(monthly_average_discharge, aes(x = factor(month), y = V1, group = month))
   ylab(label = "Runoff (m3/s)") +
   theme_bw()
 #different profiles of various chosen rivers
-yearly_annual_discharge_5_rivers <- position_in_annual_runoff[, sum(value), by = .(id,year)]
+yearly_annual_discharge_5_rivers <- position_in_annual_runoff[, sum(value), by = .(id, year)]
 yearly_annual_discharge_5_rivers
 runnoff_year_mat <- dcast(yearly_annual_discharge_5_rivers, year~id)
 runnoff_year_mat[97:193, ]
 runnoff_year_mat <- runnoff_year_mat[97:193,]
 runnoff_year_mat
 runoff_year_cor <- cor(runnoff_year_mat[, -1], use = "pairwise.complete.obs")
-runoff_year_cor <- round(runoff_year_cor,2)
+runoff_year_cor <- round(runoff_year_cor, 2)
 to_plot <- melt(runoff_year_cor)
 to_plot
 
@@ -278,11 +278,11 @@ runoff_5_rivers_2[month == 7 | month == 8 | month == 9, season := factor('summer
 runoff_5_rivers_2
 
 summer_runnof <- runoff_5_rivers_2[season == "summer" ]
-summer_runnof <- summer_runnof[,sum(value), by = .(year,id)]
+summer_runnof <- summer_runnof[, sum(value), by = .(year, id)]
 summer_runnof
 winter_runnof <- runoff_5_rivers_2[season == "winter" ]
 winter_runnof
-winter_runnof <- winter_runnof[,sum(value), by = .(year,id)]
+winter_runnof <- winter_runnof[, sum(value), by = .(year, id)]
 winter_runnof
 summer_runnof$year <- as.numeric(factor((summer_runnof$year)))
 winter_runnof$year <- as.numeric(factor((winter_runnof$year)))
@@ -321,8 +321,8 @@ all_data_100plusyears[month == 07 | month == 08 | month == 09, season := factor(
 all_data_100plusyears[month == 04 | month == 05 | month == 06, season := factor('spring')]
 all_data_100plusyears[month == 10 | month == 11 | month == 12, season := factor('autumn')]
 all_data_100plusyears[, value_norm := scale(value), by = .(id, year, season)]
-yearly_annual_data <- all_data_100plusyears[, sum(value), by = .(id,season,year)]
-yearly_annual_data[, value_norm := scale(V1), by = .(id,season)]
+yearly_annual_data <- all_data_100plusyears[, sum(value), by = .(id, season, year)]
+yearly_annual_data[, value_norm := scale(V1), by = .(id, season)]
 yearly_annual_data
 all_data_100plusyears[, mean(value), by = .(id,year,season)]
 summer <- yearly_annual_data[season == "summer"]
@@ -458,7 +458,7 @@ ggplot(summer_test[year > 1910 | year < 2000], aes(x = year, y = value_norm, col
 winter
 winter2 <- winter[year > 1950]
 winter2
-summer2 <- summer[year >1950]
+summer2 <- summer[year > 1950]
 summer2
 year_thres <- 1980
 to_plot <- rbind(cbind(winter2, season = factor('winter')), 
